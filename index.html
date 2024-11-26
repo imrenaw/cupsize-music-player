@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Я буду тусоваться дома!</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background: radial-gradient(circle, #e8e8e8, #bbbbbb);
+            color: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        h1 {
+            font-size: 3rem;
+            text-transform: uppercase;
+            text-align: center;
+            animation: titleMove 5s infinite ease-in-out;
+        }
+
+        @keyframes titleMove {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(-10px) rotate(-1deg); }
+        }
+
+        .player-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.05);
+            border: 2px solid black;
+            box-shadow: 5px 5px 0px black;
+        }
+
+        .controls button {
+            background: none;
+            border: 2px solid black;
+            padding: 10px 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+
+        .controls button:hover {
+            transform: translate(-2px, -2px);
+            background-color: black;
+            color: white;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 200px;
+            height: 5px;
+            background: black;
+            outline: none;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 15px;
+            height: 15px;
+            background: black;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="player-container">
+        <h1 id="title">Я буду тусоваться дома!</h1>
+        <div class="controls">
+            <button id="prev">◄ Назад</button>
+            <button id="play">▶ Играть</button>
+            <button id="pause">|| Пауза</button>
+            <button id="next">► Вперёд</button>
+        </div>
+        <input id="volume" type="range" min="0" max="1" step="0.01" value="0.5">
+    </div>
+    <script>
+        const phrases = [
+            "Я говорю с собой, и мне норм.",
+            "Вы мне не нужны, и я вам тоже.",
+            "Я тут, вы там — и это идеально.",
+            "Одиночество — мой выбор.",
+            "Дом — это лучшее место для тусовки.",
+            "Я и мои мысли — лучшее комбо.",
+            "Я закрою дверь и открою себя.",
+            "Мир шумит, а я живу в тишине.",
+            "Мне не скучно, когда я один.",
+            "Одиночество звучит лучше толпы."
+        ];
+
+        let currentPhraseIndex = 0;
+        const titleElement = document.getElementById('title');
+
+        function changePhrase() {
+            currentPhraseIndex = (currentPhraseIndex + 1) % phrases.length;
+            titleElement.textContent = phrases[currentPhraseIndex];
+        }
+
+        setInterval(changePhrase, 10000);
+
+        const audio = new Audio();
+        let currentTrackIndex = 0;
+
+        const tracks = [
+            "blaknot.mp3",
+            "bolnica.mp3",
+            "fotografii.mp3",
+            "furafurafura.mp3",
+            "pochemu.mp3",
+            "pridet vesna.mp3",
+            "skrivau.mp3",
+            "stanet.mp3",
+            "tusovatsa doma.mp3"
+        ];
+
+        function loadTrack(index) {
+            currentTrackIndex = index;
+            audio.src = tracks[currentTrackIndex];
+            audio.load();
+        }
+
+        function playTrack() {
+            if (!audio.src) {
+                loadTrack(currentTrackIndex);
+            }
+            audio.play();
+        }
+
+        function nextTrack() {
+            currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
+            loadTrack(currentTrackIndex);
+            playTrack();
+        }
+
+        function previousTrack() {
+            currentTrackIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
+            loadTrack(currentTrackIndex);
+            playTrack();
+        }
+
+        loadTrack(currentTrackIndex);
+
+        document.getElementById("play").addEventListener("click", playTrack);
+        document.getElementById("pause").addEventListener("click", () => audio.pause());
+        document.getElementById("next").addEventListener("click", nextTrack);
+        document.getElementById("prev").addEventListener("click", previousTrack);
+        document.getElementById("volume").addEventListener("input", (e) => {
+            audio.volume = e.target.value;
+        });
+
+        audio.addEventListener("ended", nextTrack);
+    </script>
+</body>
+</html>
